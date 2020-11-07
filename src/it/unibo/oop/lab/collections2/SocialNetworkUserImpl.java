@@ -1,7 +1,9 @@
 package it.unibo.oop.lab.collections2;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -29,7 +31,7 @@ public class SocialNetworkUserImpl<U extends User> extends UserImpl implements S
      * 
      * think of what type of keys and values would best suit the requirements
      */
-
+	private final Map<String, U> followedUsers;
     /*
      * [CONSTRUCTORS]
      * 
@@ -56,6 +58,12 @@ public class SocialNetworkUserImpl<U extends User> extends UserImpl implements S
      */
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
         super(name, surname, user, userAge);
+        this.followedUsers = new HashMap<String, U>();
+    }
+    
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+    	super(name, surname, user, -1);
+    	this.followedUsers = new HashMap<String, U>();
     }
 
     /*
@@ -66,11 +74,16 @@ public class SocialNetworkUserImpl<U extends User> extends UserImpl implements S
 
     @Override
     public boolean addFollowedUser(final String circle, final U user) {
+    	if(!this.followedUsers.containsValue(user)) {
+    		this.followedUsers.put(circle, user);
+    		return true;
+    	}
         return false;
     }
 
     @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
+    	
         return null;
     }
 
