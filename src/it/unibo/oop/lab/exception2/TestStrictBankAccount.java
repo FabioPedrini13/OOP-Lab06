@@ -1,6 +1,7 @@
 package it.unibo.oop.lab.exception2;
 
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 /**
  * JUnit test to test
@@ -9,7 +10,9 @@ import org.junit.Test;
  */
 public class TestStrictBankAccount {
 
-    /**
+    private static final int INITIAL_BALANCE = 10000;
+
+	/**
      * Used to test Exceptions on {@link StrictBankAccount}.
      */
     @Test
@@ -25,15 +28,39 @@ public class TestStrictBankAccount {
          */
     	AccountHolder holder1 = new AccountHolder("Mario", "Rossi", 1);
     	AccountHolder holder2 = new AccountHolder("Luigi", "Verdi", 2);
-    	StrictBankAccount account1 = new StrictBankAccount(1, 10000, 10);
-    	StrictBankAccount account2 = new StrictBankAccount(2, 10000, 10);
+    	StrictBankAccount account1 = new StrictBankAccount(holder1.getUserID(), INITIAL_BALANCE, 10);
+    	StrictBankAccount account2 = new StrictBankAccount(holder2.getUserID(), INITIAL_BALANCE, 10);
     	
-    	account1.deposit(holder1.getUserID(), 2000);
+    	try {
+    		account1.deposit(holder2.getUserID(), 2000);
+    	} catch (WrongAccountHolderException e) {
+    		fail("Wrong account holder");
+    	}
+    	
     	for (int i=0; i<9; i++) {
-    		account1.withdrawFromATM(holder1.getUserID(), 800);
+    		try {
+    			account1.withdrawFromATM(holder1.getUserID(), 800);
+    		} catch (WrongAccountHolderException e) {
+    			fail("Wrong account holder");
+    		}
     		System.out.println("Balance= " + account1.getBalance() 
     			+ "  nTransaction= " + account1.getNTransactions());
     	}
-    	account2.withdraw(holder2.getUserID(), 2000);
+    	
+    	try {
+    		account1.withdrawFromATM(holder1.getUserID(), 2000);
+    	} catch (WrongAccountHolderException e) {
+    		fail("Wrong account holder");
+    	} catch (TransactionsOverQuotaException e) {
+    		fail("No more transactions available");
+    	} 
+    	
+    	try {
+    		account2.withdraw(holder2.getUserID(), INITIAL_BALANCE * 2);
+    	} catch (WrongAccountHolderException e) {
+    		fail("Wrong account holder");
+    	} catch (NotEnoughFoundsException e) {
+    		fail("Not enough founds");
+    	}
     }
 }
